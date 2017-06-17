@@ -1,5 +1,4 @@
 import React from 'react';
-import {Row, Col} from 'antd';
 import {
 	Menu,
 	Icon,
@@ -9,13 +8,18 @@ import {
 	Input,
 	Button,
 	CheckBox,
-	Modal
+	Modal,
+	Spin,
+	Row,
+	Col,
+	Checkbox
 } from 'antd';
 const FormItem = Form.Item;
 const SubMenu = Menu.SubMenu;
 const TabPane = Tabs.TabPane;
 const MenuItemGroup = Menu.ItemGroup;
-import {Router, Route, Link, browserHistory} from 'react-router'
+import {Router, Route, Link, browserHistory} from 'react-router';
+
 class PCHeader extends React.Component {
 	constructor() {
 		super();
@@ -90,12 +94,13 @@ class PCHeader extends React.Component {
 	};
 	render() {
 		let {getFieldProps} = this.props.form;
+		const { getFieldDecorator } = this.props.form;
 		const userShow = this.state.hasLogined
 			? <Menu.Item key="logout" class="register">
 					<Button type="primary" htmlType="button">{this.state.userNickName}</Button>
 					&nbsp;&nbsp;
-					<Link target="_blank">
-						<Button type="primary" htmlType="button">个人中心</Button>
+					<Link target="_blank" to={`/usercenter`}>
+						<Button type="dashed" htmlType="button">个人中心</Button>
 					</Link>
 					&nbsp;&nbsp;
 					<Button type="ghost" htmlType="button" onClick={this.logout.bind(this)}>退出</Button>
@@ -106,14 +111,14 @@ class PCHeader extends React.Component {
 		return (
 			<header>
 				<Row>
-					<Col span={2}></Col>
+					<Col span={1}></Col>
 					<Col span={4}>
 						<a href="/" class="logo">
 							<img src="./src/images/logo.png" alt="logo"/>
 							<span>ReactNews</span>
 						</a>
 					</Col>
-					<Col span={16}>
+					<Col span={19}>
 						<Menu mode="horizontal" onClick={this.handleClick.bind(this)} selectedKeys={[this.state.current]}>
 							<Menu.Item key="top">
 								<Icon type="appstore"/>头条
@@ -142,39 +147,56 @@ class PCHeader extends React.Component {
 							{userShow}
 						</Menu>
 
-
-						<Modal title="用户中心" wrapClassName="vertical-center-modal" visible={this.state.modalVisible} onCancel= {()=>this.setModalVisible(false)} onOk={() => this.setModalVisible(false)} okText="关闭">
+						<Modal title="用户中心" wrapClassName="vertical-center-modal" visible={this.state.modalVisible} onCancel= {()=>this.setModalVisible(false)} onOk={() => this.setModalVisible(false)}>
 							<Tabs type="card" onChange={this.callback.bind(this)}>
 								<TabPane tab="登录" key="1">
-									<Form horizontal onSubmit={this.handleSubmit.bind(this)}>
-										<FormItem label="账户">
-											<Input placeholder="请输入您的账号" {...getFieldProps('userName')}/>
-										</FormItem>
-										<FormItem label="密码">
-											<Input type="password" placeholder="请输入您的密码" {...getFieldProps('password')}/>
-										</FormItem>
-										<Button type="primary" htmlType="submit">登录</Button>
-									</Form>
+									 <Form onSubmit={this.handleSubmit.bind(this)} className="login-form">
+								        <FormItem>
+								          {getFieldDecorator('userName', {
+								            rules: [{ required: true, message: 'Please input your username!' }],
+								          })(
+								            <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="Username" />
+								          )}
+								        </FormItem>
+								        <FormItem>
+								          {getFieldDecorator('password', {
+								            rules: [{ required: true, message: 'Please input your Password!' }],
+								          })(
+								            <Input prefix={<Icon type="lock" style={{ fontSize: 13 }} />} type="password" placeholder="Password" />
+								          )}
+								        </FormItem>
+								        <FormItem>
+								          {getFieldDecorator('remember', {
+								            valuePropName: 'checked',
+								            initialValue: true,
+								          })(
+								            <Checkbox>Remember me</Checkbox>
+								          )}
+								          <a className="login-form-forgot" href="">Forgot password</a>
+								          <div></div>
+								          <Button type="primary" htmlType="submit" className="login-form-button">
+								            Log in
+								          </Button>
+								        </FormItem>
+								      </Form>
 								</TabPane>
 								<TabPane tab="注册" key="2">
 									<Form horizontal onSubmit={this.handleSubmit.bind(this)}>
 										<FormItem label="账户">
-											<Input placeholder="请输入您的账号" {...getFieldProps('r_userName')}/>
+											<Input placeholder="请输入您的账号" {...getFieldDecorator('r_userName')}/>
 										</FormItem>
 										<FormItem label="密码">
-											<Input type="password" placeholder="请输入您的密码" {...getFieldProps('r_password')}/>
+											<Input type="password" placeholder="请输入您的密码" {...getFieldDecorator('r_password')}/>
 										</FormItem>
 										<FormItem label="确认密码">
-											<Input type="password" placeholder="请再次输入您的密码" {...getFieldProps('r_confirmPassword')}/>
+											<Input type="password" placeholder="请再次输入您的密码" {...getFieldDecorator('r_confirmPassword')}/>
 										</FormItem>
 										<Button type="primary" htmlType="submit">注册</Button>
 									</Form>
 								</TabPane>
 							</Tabs>
 						</Modal>
-						
 					</Col>
-					<Col span={2}></Col>
 				</Row>
 			</header>
 		);
