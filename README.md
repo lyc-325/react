@@ -4,6 +4,7 @@ REACT仿网易新闻
 -------------------
 * React
 * React-router
+* fetch
 * Antd
 
 安装使用
